@@ -14,20 +14,30 @@ def fetch_launch_photos(launch_id):
     return launch_info.get('links', {}).get('flickr', {}).get('original', [])
 
 
+def create_folder(folder_name):
+    os.makedirs(folder_name, exist_ok=True)
+
+
+def save_photos(photo_urls, folder_name):
+    for photo_number, photo_url in enumerate(photo_urls, start=1):
+        file_extension = get_file_extension(photo_url)
+        file_name = f'spacex_launch_{photo_number}{file_extension}'
+        file_path = os.path.join(folder_name, file_name)
+        download_image(photo_url, file_path)
+    print(f'Все изображения SpaceX сохранены в папке: {folder_name}')
+
+
 def download_spacex_launch_photos(launch_id):
     try:
         photo_urls = fetch_launch_photos(launch_id)
         if not photo_urls:
             print("Нет фотографий для этого запуска SpaceX.")
             return
+
         folder_name = 'spacex_images'
-        os.makedirs(folder_name, exist_ok=True)
-        for photo_number, photo_url in enumerate(photo_urls, start=1):
-            file_extension = get_file_extension(photo_url)
-            file_name = f'spacex_launch_{photo_number}{file_extension}'
-            file_path = os.path.join(folder_name, file_name)
-            download_image(photo_url, file_path)
-        print(f'Все изображения SpaceX сохранены в папке: {folder_name}')
+        create_folder(folder_name)
+        save_photos(photo_urls, folder_name)
+
     except requests.exceptions.RequestException as request_error:
         print(f"Ошибка при выполнении запроса: {request_error}")
     except FileNotFoundError as file_error:

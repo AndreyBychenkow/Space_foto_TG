@@ -1,3 +1,4 @@
+import argparse
 import os
 
 from dotenv import load_dotenv
@@ -5,13 +6,10 @@ from telegram import Bot
 
 
 def send_photo(bot, chat_id, photo_path):
-    try:
-        with open(photo_path, 'rb') as photo:
-            bot.send_photo(chat_id=chat_id, photo=photo,
-                           caption="Вот вам картинка!")
-        print("Сообщение и изображение отправлены!")
-    except FileNotFoundError:
-        print(f"Файл не найден: {photo_path}")
+    with open(photo_path, 'rb') as photo:
+        bot.send_photo(chat_id=chat_id, photo=photo,
+                       caption="Вот вам картинка!")
+    print("Сообщение и изображение отправлены!")
 
 
 def main():
@@ -22,9 +20,18 @@ def main():
 
     bot = Bot(token=bot_token)
 
-    photo_path = input("Введите путь к файлу с изображением: ")
+    parser = argparse.ArgumentParser(
+        description='Отправка изображения в Telegram.')
+    parser.add_argument('photo_path', type=str,
+                        help='Путь к файлу с изображением')
+    args = parser.parse_args()
 
-    send_photo(bot, group_chat_id, photo_path)
+    try:
+        send_photo(bot, group_chat_id, args.photo_path)
+    except FileNotFoundError:
+        print(f"Файл не найден: {args.photo_path}")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
 
 
 if __name__ == '__main__':
