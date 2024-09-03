@@ -24,20 +24,14 @@ def save_photos(photo_urls, folder_name):
 
 
 def download_spacex_launch_photos(launch_id):
-    try:
-        photo_urls = fetch_launch_photos(launch_id)
-        if not photo_urls:
-            print("Нет фотографий для этого запуска SpaceX.")
-            return
+    photo_urls = fetch_launch_photos(launch_id)
+    if not photo_urls:
+        print("Нет фотографий для этого запуска SpaceX.")
+        return
 
-        folder_name = 'spacex_images'
-        os.makedirs(folder_name, exist_ok=True)
-        save_photos(photo_urls, folder_name)
-
-    except requests.exceptions.RequestException as request_error:
-        print(f"Ошибка при выполнении запроса: {request_error}")
-    except FileNotFoundError as file_error:
-        print(f"Ошибка при сохранении файла: {file_error}")
+    folder_name = 'spacex_images'
+    os.makedirs(folder_name, exist_ok=True)
+    save_photos(photo_urls, folder_name)
 
 
 def main():
@@ -46,7 +40,13 @@ def main():
     parser.add_argument('--launch_id', type=str, help='ID запуска SpaceX',
                         default='5eb87d46ffd86e000604b388')
     args = parser.parse_args()
-    download_spacex_launch_photos(args.launch_id)
+
+    try:
+        download_spacex_launch_photos(args.launch_id)
+    except requests.exceptions.RequestException as request_error:
+        print(f"Ошибка при выполнении запроса: {request_error}")
+    except FileNotFoundError as file_error:
+        print(f"Ошибка при сохранении файла: {file_error}")
 
 
 if __name__ == '__main__':
