@@ -14,10 +14,6 @@ def fetch_launch_photos(launch_id):
     return launch_info.get('links', {}).get('flickr', {}).get('original', [])
 
 
-def create_folder(folder_name):
-    os.makedirs(folder_name, exist_ok=True)
-
-
 def save_photos(photo_urls, folder_name):
     for photo_number, photo_url in enumerate(photo_urls, start=1):
         file_extension = get_file_extension(photo_url)
@@ -35,7 +31,7 @@ def download_spacex_launch_photos(launch_id):
             return
 
         folder_name = 'spacex_images'
-        create_folder(folder_name)
+        os.makedirs(folder_name, exist_ok=True)
         save_photos(photo_urls, folder_name)
 
     except requests.exceptions.RequestException as request_error:
