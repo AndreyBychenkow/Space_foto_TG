@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from telegram import Bot
+from telegram.error import NetworkError, TelegramError
 
 
 def send_photo(bot, chat_id, photo_path):
@@ -30,8 +31,10 @@ def main():
         send_photo(bot, group_chat_id, args.photo_path)
     except FileNotFoundError:
         print(f"Файл не найден: {args.photo_path}")
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
+    except NetworkError:
+        print("Произошла ошибка с сетью.")
+    except TelegramError:
+        print("Произошла ошибка с Telegram API.")
 
 
 if __name__ == '__main__':
